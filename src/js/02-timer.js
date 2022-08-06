@@ -2,14 +2,22 @@ import "flatpickr/dist/flatpickr.min.css";
 import flatpickr from "flatpickr";
 
 const currentTime = Date.now()
-let deadline = {};
+let deadline = 0;
+let interval = 0;
+let valueToRe = {};
+let disabledBtn = true;
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+    if (selectedDates[0].getTime() < currentTime) {
+      return alert(`Не смотри в прошлое`)
+    }
+    deadline = selectedDates[0].getTime();
+    refs.startBtn.disabled = false;
+    refs.startBtn.style.backgroundColor = `#212121`;
   },
 };
 const flatPic = flatpickr("#datetime-picker", options);
@@ -19,19 +27,21 @@ const refs = {
     days: document.querySelector(`[data-days]`),
     hours: document.querySelector(`[data-hours]`),
     minutes: document.querySelector(`[data-minutes]`),
-    seconds: document.querySelector(`[data-seconds]`),
+  seconds: document.querySelector(`[data-seconds]`),
 };
 
-refs.startBtn.addEventListener(`click`, onStart)
+refs.startBtn.addEventListener(`click`, onStart);
+refs.startBtn.disabled = disabledBtn;
 
 function onStart() {
-    console.log(`click`);
-    console.log(currentTime)
-    console.log(deadline)
-}
+  refs.startBtn.disabled = true;
+  refs.startBtn.style.backgroundColor = `red`
+  downCounterStart();
+};
 
-
-
+function pad(v) {
+  return String(v).padStart(2, `0`);
+};
 
 function convertMs(ms) {
   const second = 1000;
@@ -49,6 +59,22 @@ function convertMs(ms) {
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
   return { days, hours, minutes, seconds };
+};
+
+function downCounterStart() {
+  interval = deadline - currentTime;
+  const timerOn = setInterval(() => {
+    if(interval <= 0){clearInterval(timerOn)}
+     interval -= 1000;
+    valueToRe = convertMs(interval);
+    valueRecorder(valueToRe);
+  }, 1000); 
+};
+
+function valueRecorder(arr) {
+  refs.seconds.textContent = pad(arr.seconds);
+  refs.minutes.textContent = pad(arr.minutes);
+  refs.hours.textContent = pad(arr.hours);
+  refs.days.textContent = pad(arr.days);
 }
 
-console.log(convertMs(currentTime))

@@ -1,5 +1,7 @@
 import "flatpickr/dist/flatpickr.min.css";
+import "notiflix/dist/notiflix-aio-3.2.5.min.js";
 import flatpickr from "flatpickr";
+import Notiflix from 'notiflix';
 
 const currentTime = Date.now()
 let deadline = 0;
@@ -13,14 +15,14 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     if (selectedDates[0].getTime() < currentTime) {
-      return alert(`Не смотри в прошлое`)
+      return Notiflix.Notify.failure('do not look to the past');
     }
     deadline = selectedDates[0].getTime();
     refs.startBtn.disabled = false;
     refs.startBtn.style.backgroundColor = `#212121`;
   },
 };
-const flatPic = flatpickr("#datetime-picker", options);
+
 const refs = {
     timeInpt: document.querySelector(`#datetime-picer`),
     startBtn: document.querySelector(`[data-start]`),
@@ -30,6 +32,7 @@ const refs = {
   seconds: document.querySelector(`[data-seconds]`),
 };
 
+flatpickr("#datetime-picker", options);
 refs.startBtn.addEventListener(`click`, onStart);
 refs.startBtn.disabled = disabledBtn;
 

@@ -12,6 +12,11 @@ formEl.addEventListener(`input`, onInput);
 formEl.addEventListener(`submit`, onSubmit);
 
 function onInput(e) {
+  if (e.target.value < 0) {
+    e.target.value = ``;
+    return Notiflix.Notify.failure(`${e.target.name} cannot be negative`) 
+  }
+  
   refs[e.target.name] = e.target.value;
 };
 

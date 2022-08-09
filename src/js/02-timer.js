@@ -67,8 +67,9 @@ function convertMs(ms) {
 function downCounterStart() {
   interval = deadline - currentTime;
   const timerOn = setInterval(() => {
-    if(interval <= 0){clearInterval(timerOn)}
-     interval -= 1000;
+    if(interval <= 1000){return clearInterval(timerOn)}
+    interval -= 1000;
+    console.log(interval);
     valueToRe = convertMs(interval);
     valueRecorder(valueToRe);
   }, 1000); 
